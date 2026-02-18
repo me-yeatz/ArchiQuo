@@ -94,10 +94,19 @@ export interface Project {
   createdAt: string;
 }
 
+export interface UserProfile {
+  companyName: string;
+  companyAddress: string;
+  senderName: string;
+  senderTitle: string;
+  logoUrl?: string;
+}
+
 export interface AppState {
   projects: Project[];
   quotations: Quotation[];
   invoices: Invoice[];
   payments: Payment[];
   transmittals: Transmittal[];
+  profile: UserProfile;
 }

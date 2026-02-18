@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AppState, Project, Quotation, Invoice, Payment, Transmittal } from './types';
+import { AppState, Project, Quotation, Invoice, Payment, Transmittal, UserProfile } from './types';
 
 interface StoreContextType extends AppState {
   addProject: (p: Omit<Project, 'id' | 'createdAt'>) => void;
@@ -11,6 +11,7 @@ interface StoreContextType extends AppState {
   updateInvoice: (id: string, i: Partial<Invoice>) => void;
   addPayment: (pay: Omit<Payment, 'id'>) => void;
   addTransmittal: (t: Omit<Transmittal, 'id'>) => void;
+  updateProfile: (p: UserProfile) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -18,7 +19,22 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AppState>(() => {
     const saved = localStorage.getItem('archiquote_db');
-    return saved ? JSON.parse(saved) : { projects: [], quotations: [], invoices: [], payments: [], transmittals: [] };
+    const defaultProfile = {
+      companyName: 'YEATZ ARCH+STUDIO',
+      companyAddress: '1738, Jalan Gajah 11, Kampung Kubu Gajah, 40160 Sungai Buloh, Selangor',
+      senderName: 'Muhammad Fazreen Bin Ahmad Azhar',
+      senderTitle: 'Project Manager',
+      logoUrl: '/LOGO 2025-03.png'
+    };
+
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...parsed,
+        profile: parsed.profile || defaultProfile
+      };
+    }
+    return { projects: [], quotations: [], invoices: [], payments: [], transmittals: [], profile: defaultProfile };
   });
 
   useEffect(() => {
@@ -75,17 +91,22 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setState(s => ({ ...s, transmittals: [newT, ...s.transmittals] }));
   };
 
+  const updateProfile = (p: UserProfile) => {
+    setState(s => ({ ...s, profile: p }));
+  };
+
   return (
-    <StoreContext.Provider value={{ 
-      ...state, 
-      addProject, 
-      updateProject, 
-      addQuotation, 
-      updateQuotation, 
-      addInvoice, 
-      updateInvoice, 
+    <StoreContext.Provider value={{
+      ...state,
+      addProject,
+      updateProject,
+      addQuotation,
+      updateQuotation,
+      addInvoice,
+      updateInvoice,
       addPayment,
-      addTransmittal
+      addTransmittal,
+      updateProfile
     }}>
       {children}
     </StoreContext.Provider>

@@ -4,7 +4,7 @@ import { useStore } from './store';
 import Layout from './components/Layout';
 import { Project, Quotation, Invoice, Payment, Transmittal } from './types';
 import { formatCurrency } from './utils/helpers';
-import { NewProjectForm, NewQuotationForm, NewInvoiceForm, NewTransmittalForm } from './components/ProjectForms';
+import { NewProjectForm, NewQuotationForm, NewInvoiceForm, NewTransmittalForm, UserProfileForm } from './components/ProjectForms';
 
 type ModalState = {
   type: 'quotation' | 'invoice' | 'transmittal' | 'select-project-for-transmittal';
@@ -13,7 +13,7 @@ type ModalState = {
 } | null;
 
 const DashboardView = () => {
-  const { projects, quotations, invoices } = useStore();
+  const { projects, quotations, invoices, profile } = useStore();
   const stats = [
     { label: 'ACTIVE PROJECTS', value: projects.filter(p => p.status === 'Active').length, color: 'text-black' },
     { label: 'OPEN QUOTATIONS', value: quotations.filter(q => q.status === 'Draft' || q.status === 'Sent').length, color: 'text-[#c02164]' },
@@ -26,7 +26,7 @@ const DashboardView = () => {
       <header className="flex justify-between items-end border-b-4 border-black pb-6">
         <div>
           <h1 className="text-5xl font-black tracking-tighter uppercase italic">Control.Panel</h1>
-          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">YEATZ ARCH+STUDIO // CORE MANAGEMENT</p>
+          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">{profile.companyName} // CORE MANAGEMENT</p>
         </div>
         <div className="text-right no-print">
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">SYSTEM STATUS</p>
@@ -86,7 +86,7 @@ const DashboardView = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
@@ -101,7 +101,7 @@ const ProjectsView = ({ onSelectProject }: { onSelectProject: (p: Project) => vo
       <div className="flex justify-between items-end border-b-4 border-black pb-6">
         <div>
           <h1 className="text-5xl font-black tracking-tighter uppercase italic">Registry.All</h1>
-          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">YEATZ ARCH+STUDIO // ASSET DIRECTORY</p>
+          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">{useStore().profile.companyName} // ASSET DIRECTORY</p>
         </div>
         <div className="flex bg-[#1a1c1e] p-1 gap-1">
           {['Active', 'Completed', 'Archived'].map((s) => (
@@ -162,7 +162,7 @@ const TransmittalsView = ({ onOpenModal }: { onOpenModal: (state: ModalState) =>
       <div className="flex justify-between items-end border-b-4 border-black pb-6">
         <div>
           <h1 className="text-5xl font-black tracking-tighter uppercase italic">Registry.Transmittals</h1>
-          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">YEATZ ARCH+STUDIO // LOG OF ALL TRANSMISSIONS</p>
+          <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">{useStore().profile.companyName} // LOG OF ALL TRANSMISSIONS</p>
         </div>
         <button
           onClick={() => onOpenModal({ type: 'select-project-for-transmittal' })}
@@ -521,6 +521,7 @@ const App = () => {
       case 'projects': return <ProjectsView onSelectProject={setSelectedProject} />;
       case 'transmittals': return <TransmittalsView onOpenModal={setActiveModal} />;
       case 'new-project': return <NewProjectForm onSuccess={() => setActiveView('projects')} />;
+      case 'profile': return <UserProfileForm onSuccess={() => setActiveView('dashboard')} />;
       default: return <DashboardView />;
     }
   };

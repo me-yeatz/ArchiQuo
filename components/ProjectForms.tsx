@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
-import { Project, Quotation, ScopeItem, Invoice, InvoiceItem, Transmittal, TransmittalItem } from '../types';
+import { Project, Quotation, ScopeItem, Invoice, InvoiceItem, Transmittal, TransmittalItem, UserProfile } from '../types';
 import { getRinggitWords, formatCurrency } from '../utils/helpers';
 
 const inputClasses = "w-full px-4 py-3 technical-border bg-white text-slate-900 placeholder:text-slate-300 focus:bg-slate-50 outline-none transition-all font-bold text-sm";
@@ -71,7 +71,7 @@ export const NewProjectForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess 
 };
 
 export const NewQuotationForm: React.FC<{ project: Project, onSuccess: () => void }> = ({ project, onSuccess }) => {
-  const { addQuotation } = useStore();
+  const { addQuotation, profile } = useStore();
   const [scopeItems, setScopeItems] = useState<ScopeItem[]>([
     { id: '1', category: 'Architecture', description: 'Architectural Submission to Local Council', charges: 0 }
   ]);
@@ -114,9 +114,13 @@ export const NewQuotationForm: React.FC<{ project: Project, onSuccess: () => voi
   return (
     <form onSubmit={handleSubmit} className="blueprint-bg technical-border p-8 space-y-10">
       <div className="flex justify-between items-start border-b-2 border-black pb-6">
-        <div>
-          <h2 className="text-3xl font-black uppercase italic tracking-tighter">Doc.Quotation</h2>
-          <p className="text-[10px] font-black text-[#c02164] tracking-widest mt-1">YEATZ ARCH+STUDIO</p>
+        <div className="flex items-center gap-4">
+          <img src={profile.logoUrl || "/LOGO 2025-03.png"} alt={profile.companyName} className="h-12 w-auto object-contain" />
+          <div>
+            <h2 className="text-3xl font-black uppercase italic tracking-tighter">Doc.Quotation</h2>
+            <p className="text-[10px] font-black text-[#c02164] tracking-widest mt-0.5">{profile.companyName}</p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase leading-tight max-w-[200px]">{profile.companyAddress}</p>
+          </div>
         </div>
         <div className="text-right">
           <p className={labelClasses}>Project Ref</p>
@@ -221,7 +225,8 @@ export const NewQuotationForm: React.FC<{ project: Project, onSuccess: () => voi
 };
 
 export const NewInvoiceForm: React.FC<{ project: Project, quotation?: Quotation, onSuccess: () => void }> = ({ project, quotation, onSuccess }) => {
-  const { addInvoice } = useStore();
+  const { addInvoice, profile } = useStore();
+  const [signatureData, setSignatureData] = useState('');
   const [items, setItems] = useState<InvoiceItem[]>(
     quotation
       ? [{ id: '1', description: `Professional Services as per Quotation ${quotation.quotationNo}`, amount: quotation.proposedFees }]
@@ -253,8 +258,14 @@ export const NewInvoiceForm: React.FC<{ project: Project, quotation?: Quotation,
   return (
     <form onSubmit={handleSubmit} className="blueprint-bg technical-border p-8 space-y-6">
       <div className="border-b-2 border-black pb-4 flex justify-between items-end">
-        <h2 className="text-3xl font-black uppercase italic tracking-tighter">Tax.Invoice</h2>
-        <div className="text-right text-[10px] font-black text-slate-400">STATUS: DRAFTING</div>
+        <div className="flex items-center gap-4">
+          <img src={profile.logoUrl || "/LOGO 2025-03.png"} alt={profile.companyName} className="h-12 w-auto object-contain" />
+          <div>
+            <h2 className="text-3xl font-black uppercase italic tracking-tighter">Tax.Invoice</h2>
+            <p className="text-[10px] font-black text-slate-400 mt-0.5 uppercase tracking-widest">{profile.companyName}</p>
+          </div>
+        </div>
+        <div className="text-right text-[10px] font-black text-slate-400 uppercase">STATUS: DRAFTING</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -306,6 +317,18 @@ export const NewInvoiceForm: React.FC<{ project: Project, quotation?: Quotation,
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-12 mt-8">
+        <div className="space-y-4">
+          <p className={labelClasses}>Authorized Signature</p>
+          <SignaturePad onSave={setSignatureData} />
+          <p className="text-[9px] font-bold text-slate-400 italic">Sign manual above for official validation</p>
+        </div>
+        <div className="text-right flex flex-col justify-end">
+          <p className="text-[10px] font-black uppercase">{profile.companyName}</p>
+          <p className="text-[9px] font-bold text-slate-500 uppercase">{profile.companyAddress}</p>
+        </div>
+      </div>
+
       <button type="submit" className="w-full bg-[#1a1c1e] text-white py-5 font-black uppercase tracking-[0.4em] text-sm technical-border">
         ISSUE OFFICIAL INVOICE
       </button>
@@ -338,6 +361,7 @@ export const SignaturePad: React.FC<{ onSave: (data: string) => void }> = ({ onS
     const x = ('touches' in e) ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
     const y = ('touches' in e) ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
 
+    if ('touches' in e) e.preventDefault();
     ctx.beginPath();
     ctx.moveTo(x, y);
   };
@@ -353,6 +377,7 @@ export const SignaturePad: React.FC<{ onSave: (data: string) => void }> = ({ onS
     const x = ('touches' in e) ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
     const y = ('touches' in e) ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
 
+    if ('touches' in e) e.preventDefault();
     ctx.lineTo(x, y);
     ctx.stroke();
   };
@@ -398,7 +423,7 @@ export const SignaturePad: React.FC<{ onSave: (data: string) => void }> = ({ onS
 };
 
 export const NewTransmittalForm: React.FC<{ project: Project, onSuccess: () => void }> = ({ project, onSuccess }) => {
-  const { addTransmittal } = useStore();
+  const { addTransmittal, profile } = useStore();
   const [items, setItems] = useState<TransmittalItem[]>([
     { id: '1', description: '', quantity: '1 Copy', type: 'A4 Doc' }
   ]);
@@ -406,7 +431,7 @@ export const NewTransmittalForm: React.FC<{ project: Project, onSuccess: () => v
   const [tData, setTData] = useState({
     transmittalNo: `TR-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
     date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-    from: 'YEATZ ARCH+STUDIO',
+    from: profile.companyName,
     to: project.clientName,
     jobNo: project.id.slice(0, 8).toUpperCase(),
     projectTitle: project.title,
@@ -414,10 +439,10 @@ export const NewTransmittalForm: React.FC<{ project: Project, onSuccess: () => v
     transmissionModes: [] as string[],
     documentTypes: [] as string[],
     purposes: [] as string[],
-    senderName: 'Muhammad Fazreen Bin Ahmad Azhar',
-    senderTitle: 'Project Manager',
-    senderCompany: 'YEATZ ARCH+STUDIO',
-    senderAddress: '1738, Jalan Gajah 11, Kampung Kubu Gajah, 40160 Sungai Buloh, Selangor',
+    senderName: profile.senderName,
+    senderTitle: profile.senderTitle,
+    senderCompany: profile.companyName,
+    senderAddress: profile.companyAddress,
     receiverName: '',
     receivedDate: '',
     signatureData: ''
@@ -469,8 +494,8 @@ export const NewTransmittalForm: React.FC<{ project: Project, onSuccess: () => v
       {/* Header with Logo */}
       <div className="flex flex-col items-center mb-10">
         <img
-          src="/LOGO 2025-03.png"
-          alt="YEATZ ARCH+STUDIO"
+          src={profile.logoUrl || "/LOGO 2025-03.png"}
+          alt={profile.companyName}
           className="h-16 w-auto object-contain mb-4"
         />
         <h1 className="text-2xl font-black uppercase tracking-widest border-b-4 border-black inline-block pb-1">Transmittal Form</h1>
@@ -655,6 +680,87 @@ export const NewTransmittalForm: React.FC<{ project: Project, onSuccess: () => v
           Generate Professional Transmittal
         </button>
       </div>
+    </form>
+  );
+};
+
+export const UserProfileForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+  const { profile, updateProfile } = useStore();
+  const [formData, setFormData] = useState<UserProfile>(profile);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, logoUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfile(formData);
+    onSuccess();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
+      <div className="border-b-4 border-black pb-4 mb-8">
+        <h2 className="text-4xl font-black tracking-tighter uppercase italic">User.Profile</h2>
+        <p className="text-[10px] font-black text-slate-500 tracking-[0.3em] mt-1">IDENTITY CONFIGURATION</p>
+      </div>
+
+      <div className="space-y-4">
+        <label className={labelClasses}>01. Company Logo</label>
+        <div className="flex items-center gap-6 p-6 bg-white technical-border">
+          {formData.logoUrl ? (
+            <img src={formData.logoUrl} alt="Logo Preview" className="h-20 w-auto object-contain" />
+          ) : (
+            <div className="h-20 w-20 flex items-center justify-center bg-slate-100 technical-border-thin text-slate-300">
+              <i className="fas fa-image text-2xl"></i>
+            </div>
+          )}
+          <div className="flex-1">
+            <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" />
+            <label htmlFor="logo-upload" className="bg-[#1a1c1e] text-white px-4 py-2 text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-slate-800 transition-all">
+              Choose File
+            </label>
+            <p className="text-[9px] text-slate-400 mt-2 font-bold italic">Recommended: Transparent PNG, Max 1MB</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-1">
+          <label className={labelClasses}>02. Company Name</label>
+          <input required className={inputClasses} placeholder="LEGAL COMPANY NAME"
+            value={formData.companyName} onChange={e => setFormData({ ...formData, companyName: e.target.value })} />
+        </div>
+        <div className="space-y-1">
+          <label className={labelClasses}>03. Sender Name</label>
+          <input required className={inputClasses} placeholder="YOUR FULL NAME"
+            value={formData.senderName} onChange={e => setFormData({ ...formData, senderName: e.target.value })} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-1">
+          <label className={labelClasses}>04. Company Address</label>
+          <textarea rows={3} required className={inputClasses} placeholder="OFFICE ADDRESS"
+            value={formData.companyAddress} onChange={e => setFormData({ ...formData, companyAddress: e.target.value })} />
+        </div>
+        <div className="space-y-1">
+          <label className={labelClasses}>05. Professional Title</label>
+          <input required className={inputClasses} placeholder="e.g. PROJECT MANAGER"
+            value={formData.senderTitle} onChange={e => setFormData({ ...formData, senderTitle: e.target.value })} />
+        </div>
+      </div>
+
+      <button type="submit" className="w-full bg-[#c02164] text-white py-5 font-black uppercase tracking-[0.4em] text-sm technical-border hover:bg-pink-700 transition-all shadow-lg hover:shadow-pink-200">
+        Initialize Identity Sync
+      </button>
     </form>
   );
 };

@@ -1,46 +1,67 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEATZ ARCH+STUDIO | Manager</title>
+    <title>ArchiQuo | Technical Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f2bdcd; /* Orchid Pink background */
+            background-color: #f2bdcd;
+            /* Orchid Pink background */
             color: #1a1c1e;
         }
+
         .technical-border {
             border: 2px solid #1a1c1e;
         }
+
         .technical-border-thin {
             border: 1px solid #1a1c1e;
         }
+
         .blueprint-bg {
-            background-color: #f2f1e9; /* Cream paper background */
+            background-color: #f2f1e9;
+            /* Cream paper background */
         }
-        .print-only { display: none; }
+
+        .print-only {
+            display: none;
+        }
+
         @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block; }
-            body { background: white; }
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block;
+            }
+
+            body {
+                background: white;
+            }
         }
+
         /* Custom scrollbar to match technical style */
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f2bdcd;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #1a1c1e;
         }
     </style>
-<script type="importmap">
+    <script type="importmap">
 {
   "imports": {
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
@@ -51,8 +72,10 @@
 </script>
 
 </head>
+
 <body>
     <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
