@@ -1,0 +1,5 @@
+{
+  "name": "ArchiQuote - Architectural Project & Quotation Manager",
+  "description": "A comprehensive project management suite for architects and consultants to manage projects, generate professional quotations, issue invoices, and track payment statements with automated number-to-words conversion and status tracking.",
+  "requestFramePermissions": []
+}
