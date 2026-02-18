@@ -1,20 +1,39 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ArchiQuo | Architectural Documentation Manager
 
-# Run and deploy your AI Studio app
+**ArchiQuo** is a specialized management tool designed for architects and project managers to streamline the creation, tracking, and issuance of vital project documentation. Built with a technical-brutalist aesthetic, it prioritizes speed, precision, and architectural branding.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/drive/18cu9YB6h32mXi76xO_Jhkb8fN0DPmYS0
+## 🏗️ Core Features
 
-## Run Locally
+### 📄 Professional Transmittal System
+*   **Architectural Standard Layout**: Professional transmittal forms with integrated company branding.
+*   **Component Logging**: Track shop drawings, technical documents, change orders, and invoices.
+*   **Distribution Modes**: Manage physical delivery, email, and digital attachments.
+*   **Electronic Authorization**: Integrated signature pad for prompt acknowledgment of receipt.
 
-**Prerequisites:**  Node.js
+### 💰 Financial Management
+*   **Fee Proposal Generation**: Create detailed quotations with categorized service schedules.
+*   **Tax Invoice System**: Automated tax calculations and billing status tracking.
+*   **Settlement Logging**: Maintain a clear project statement with historical payment modality logs.
 
+### 🗃️ Project Registry
+*   **Asset Directory**: Centralized logging of all active, completed, and archived projects.
+*   **Executive Summaries**: Detailed tracking of project scope, narratives, and site specifics.
+*   **Vital Statistics**: Real-time project phase monitoring and internal directive management.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## 🛠️ Technical Stack
+*   **Core Logic**: React + TypeScript
+*   **Global State**: Custom Store Provider with Local Persistence
+*   **Styling**: Tailwind CSS (Technical UI Architecture)
+*   **Documentation Execution**: Professional print-optimized layouts for PDF export.
+
+---
+
+## 🚀 Deployment
+This application is optimized for **Vercel** with integrated SPA routing. Ensure `vercel.json` is present in the root directory for proper navigation handling.
+
+---
+**Developed by YEATZ ARCH+STUDIO**
